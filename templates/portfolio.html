@@ -1,0 +1,63 @@
+<section class="container p-5" id="portfolio">
+    <h2 class="text-center">Mis Proyectos</h2>
+    <hr class="mb-5">
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+        <!-- primer proyecto -->
+        <div class="col">
+            <div class="card">
+                <img class="d-block mx-lg-auto img-fluid" src="{{ url_for('static', filename='img/todo-list.png')}}" alt="imagen del proyecto">
+
+                <div class="card-body">
+                    <h5 class="card-title">Lista de tarea - Flask</h5>
+                    <p class="card-text">Este es un proyecto de gestor de lista de tareas que está desarrollado
+                        con el framework Flask de python y está conectado a una base de datos relacional.
+                    </p>
+                    <a href="http://" class="nav-link text-primary">Link aqui</a>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- segundo proyecto -->
+        <div class="col">
+            <div class="card">
+                <img class="d-block mx-lg-auto img-fluid" src="{{ url_for('static', filename='img/blog-post.png')}}" alt="imagen del proyecto">
+
+                <div class="card-body">
+                    <h5 class="card-title">BlogPosts - Flask</h5>
+                    <p class="card-text">Este es un proyecto completo de blog donde puedes crear y administrar tus propios blogs, también
+                         esta creado con Flask y utiliza una base de datos relacional PostgreSQL.
+                    </p>
+                    <a href="http://" class="nav-link text-primary">Link aqui</a>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- tercer proyecto -->
+        <div class="col">
+            <div class="card">
+                <img class="d-block mx-lg-auto img-fluid" src="{{ url_for('static', filename='img/api-contact.png')}}" alt="imagen del proyecto">
+
+                <div class="card-body">
+                    <h5 class="card-title">API Contactos - Flask</h5>
+                    <p class="card-text">Este es un proyecto de tipo API-REST para administrar una lista de contactos, está
+                        creado con Flask y utiliza una base de datos relacional.
+                    </p>
+                    <a href="http://" class="nav-link text-primary">Link aqui</a>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Agrega mas proyectos si lo deseas -->
+
+
+    </div>
+</section>
