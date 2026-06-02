@@ -3,20 +3,10 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
 
-
 # Cargar las variables del archivo .env al entorno
 load_dotenv()
 
-app=Flask(__name__)
-
-
-#configuracion para trabajar envios de correos en flask-mail con mailtrap para pruebas
-# app.config['MAIL_SERVER']='sandbox.smtp.mailtrap.io'
-# app.config['MAIL_PORT'] = 2525
-# app.config['MAIL_USERNAME'] = '4aa080c9bbd88e'
-# app.config['MAIL_PASSWORD'] = '15fa8788acf514'
-# app.config['MAIL_USE_TLS'] = True
-# app.config['MAIL_USE_SSL'] = False
+app = Flask(__name__)
 
 # Configuración de Flask-Mail usando variables de entorno
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -24,26 +14,34 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
-# Aquí os.environ.get busca los valores que guardaste en el archivo .env para trabajar con mi correo de gmail
+# Aquí os.environ.get busca los valores que guardaste en el archivo .env
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
 
-mail=Mail(app)
+# Configurar una Secret Key para que los mensajes 'flash' funcionen sin romperse
+app.secret_key = os.environ.get('SECRET_KEY', 'mi_clave_secreta_local')
 
+mail = Mail(app)
 
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # Enviamos las URLs de tus proyectos directamente como variables a la plantilla
+    urls = {
+        "todo": "https://todopython-hbvv.onrender.com/auth/login",
+        "blog": "https://blogpython.onrender.com"
+    }
+    return render_template("index.html", urls=urls)
 
-@app.route("/mail", methods=["GET","POST"]) # type: ignore
+
+@app.route("/mail", methods=["GET","POST"])
 def send_mail():
-    #si el metodo es post capturamos lo que se envia por el form
-    if request.method=="POST":
-        name=request.form.get("name", "").strip()
-        email=request.form.get("email", "").strip()
-        message=request.form.get("message", "").strip()
+    # Si el método es post capturamos lo que se envía por el form
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        message = request.form.get("message", "").strip()
 
         # 1. Validar que no haya campos vacíos
         if not name or not email or not message:
@@ -64,15 +62,13 @@ def send_mail():
             flash("Por favor, introduce un correo electrónico válido.", "danger")
             return redirect(url_for('index'))
         
-
         try:
-
-            #creamos un mensaje
-            msg=Message(
+            # Creamos un mensaje
+            msg = Message(
                 "Hola Julián, tienes un nuevo contacto desde la web",
                 body=f"Nombre. {name} \nCorreo: <{email}>\n\nMensaje: \n\n{message}",
-                sender=app.config['MAIL_USERNAME'],#este email es del que lo envia
-                recipients=[app.config['MAIL_USERNAME']],#["julianmoreno@mailtrap.io"]son los que reciben los correos
+                sender=app.config['MAIL_USERNAME'],
+                recipients=[app.config['MAIL_USERNAME']],
                 reply_to=email
             )
 
@@ -80,14 +76,12 @@ def send_mail():
             return render_template("send_mail.html")
         
         except Exception as e:
-            # Si el servidor de Gmail falla por alguna razón, capturamos el error de forma segura
             flash("Hubo un problema al enviar el correo. Inténtalo más tarde.", "danger")
             return redirect(url_for('index'))
     
-    redirect(url_for('index'))
+    # 💥 CORREGIDO: Ahora sí tiene la palabra 'return' para evitar el bloqueo del navegador
+    return redirect(url_for('index'))
 
-
-   
 
 if __name__ == '__main__':
     # Ejecuta el servidor local en modo desarrollo (debug)
