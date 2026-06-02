@@ -27,12 +27,7 @@ mail = Mail(app)
 
 @app.route("/")
 def index():
-    # Enviamos las URLs de tus proyectos directamente como variables a la plantilla
-    urls = {
-        "todo": "https://todopython-hbvv.onrender.com/auth/login",
-        "blog": "https://blogpython.onrender.com"
-    }
-    return render_template("index.html", urls=urls)
+    return render_template("index.html")
 
 
 @app.route("/mail", methods=["GET","POST"])
