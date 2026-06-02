@@ -83,10 +83,6 @@ def send_mail():
     return redirect(url_for('index'))
 
 
-@app.route("/ir-al-blog")
-def ir_al_blog():
-    return render_template("ir_a_blog.html")
-
 
 if __name__ == '__main__':
     # Ejecuta el servidor local en modo desarrollo (debug)
