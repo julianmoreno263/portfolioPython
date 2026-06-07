@@ -1,4 +1,5 @@
 import os
+import sys  # 👈 AGREGADO: Necesario para escribir en el log de errores
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
@@ -71,6 +72,9 @@ def send_mail():
             return render_template("send_mail.html")
         
         except Exception as e:
+            # 👈 MODIFICADO: Esto forzará a PythonAnywhere a registrar la falla exacta en error.log
+            print(f"--- DETALLE DEL ERROR DE CORREO: {str(e)} ---", file=sys.stderr)
+            
             flash("Hubo un problema al enviar el correo. Inténtalo más tarde.", "danger")
             return redirect(url_for('index'))
     
