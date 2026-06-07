@@ -63,6 +63,11 @@
   'use strict'
   const form = document.getElementById('contact-form')
 
+  // 👈 AGREGADO: Esto limpia el formulario automáticamente cada vez que la página se carga o se regresa a ella
+  window.addEventListener('pageshow', () => {
+    form.reset();
+  });
+
   form.addEventListener('submit', event => {
     // Si el formulario NO es válido, detenemos el envío por completo
     if (!form.checkValidity()) {
