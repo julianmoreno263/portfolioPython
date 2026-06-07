@@ -1,32 +1,17 @@
 import os
-import sys  # 👈 AGREGADO: Necesario para escribir en el log de errores
+import sys
+import requests  # 👈 AGREGADO: Necesario para enviar los datos a Formspree vía HTTPS
 from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_mail import Mail, Message
 from dotenv import load_dotenv
 
 # Cargar las variables del archivo .env al entorno
-# load_dotenv()
-# 👈 SOLUCIÓN DEFINITIVA DE RUTA: Encuentra el .env sin importar el servidor
 base_dir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(base_dir, '.env'))
 
 app = Flask(__name__)
 
-# Configuración de Flask-Mail usando variables de entorno
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-
-# Aquí os.environ.get busca los valores que guardaste en el archivo .env
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
-
 # Configurar una Secret Key para que los mensajes 'flash' funcionen sin romperse
 app.secret_key = os.environ.get('SECRET_KEY', 'mi_clave_secreta_local')
-
-mail = Mail(app)
 
 
 @app.route("/")
@@ -34,7 +19,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/mail", methods=["GET","POST"])
+@app.route("/mail", methods=["GET", "POST"])
 def send_mail():
     # Si el método es post capturamos lo que se envía por el form
     if request.method == "POST":
@@ -62,28 +47,33 @@ def send_mail():
             return redirect(url_for('index'))
         
         try:
-            # Creamos un mensaje
-            msg = Message(
-                "Hola Julián, tienes un nuevo contacto desde la web",
-                body=f"Nombre. {name} \nCorreo: <{email}>\n\nMensaje: \n\n{message}",
-                sender=app.config['MAIL_USERNAME'],
-                recipients=[app.config['MAIL_USERNAME']],
-                reply_to=email
-            )
-
-            mail.send(msg)
-            return render_template("send_mail.html")
+            # 👈 URL de tu formulario de Formspree
+            formspree_url = "https://formspree.io/f/mnjypkey"
+            
+            # Datos estructurados que Formspree necesita recibir
+            data_to_send = {
+                "name": name,
+                "email": email,
+                "message": message
+            }
+            
+            # Enviamos la petición POST de forma segura saltando las restricciones de puertos
+            response = requests.post(formspree_url, data=data_to_send)
+            
+            # Validamos que Formspree haya procesado el formulario con éxito
+            if response.status_code == 200:
+                return render_template("send_mail.html")
+            else:
+                raise Exception(f"Formspree respondió con código de estado {response.status_code}")
         
         except Exception as e:
-            # 👈 MODIFICADO: Esto forzará a PythonAnywhere a registrar la falla exacta en error.log
+            # Si ocurre algún fallo inesperado, se registrará aquí de forma legible
             print(f"--- DETALLE DEL ERROR DE CORREO: {str(e)} ---", file=sys.stderr)
-            
             flash("Hubo un problema al enviar el correo. Inténtalo más tarde.", "danger")
             return redirect(url_for('index'))
     
-    # 💥 CORREGIDO: Ahora sí tiene la palabra 'return' para evitar el bloqueo del navegador
+    # Mantiene la redirección para evitar congelamientos en peticiones GET accidentales
     return redirect(url_for('index'))
-
 
 
 if __name__ == '__main__':
