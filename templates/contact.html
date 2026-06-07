@@ -24,8 +24,12 @@
                   {% endif %}
                 {% endwith %}
                 
-                <form action="{{ url_for('send_mail') }}" method="post" class="p-4 p-md-5 border rounded-3 bg-white needs-validation" novalidate>
+                <!-- 👈 MODIFICADO: Cambiado el action a Formspree y removido 'novalidate' para activar minlength -->
+                <form action="https://formspree.io" method="post" class="p-4 p-md-5 border rounded-3 bg-white needs-validation">
                     
+                    <!-- 👈 AGREGADO: Esto le dice a Formspree que envíe al usuario a tu ruta de éxito al terminar -->
+                    <input type="hidden" name="_next" value="https://pythonanywhere.com">
+
                     <div class="mb-3">
                         <label for="name" class="form-label">Nombre completo</label>
                         <input type="text" class="form-control" id="name" name="name" required minlength="3">
