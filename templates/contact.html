@@ -66,6 +66,7 @@
   // 👈 AGREGADO: Esto limpia el formulario automáticamente cada vez que la página se carga o se regresa a ella
   window.addEventListener('pageshow', () => {
     form.reset();
+    form.classList.remove('was-validated');
   });
 
   form.addEventListener('submit', event => {
