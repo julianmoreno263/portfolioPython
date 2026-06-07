@@ -5,7 +5,10 @@ from flask_mail import Mail, Message
 from dotenv import load_dotenv
 
 # Cargar las variables del archivo .env al entorno
-load_dotenv()
+# load_dotenv()
+# 👈 SOLUCIÓN DEFINITIVA DE RUTA: Encuentra el .env sin importar el servidor
+base_dir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(base_dir, '.env'))
 
 app = Flask(__name__)
 
