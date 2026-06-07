@@ -24,10 +24,10 @@
                   {% endif %}
                 {% endwith %}
                 
-                <!-- 👈 MODIFICADO: Cambiado el action a Formspree y removido 'novalidate' para activar minlength -->
-                <form action="https://formspree.io" method="POST" class="p-4 p-md-5 border rounded-3 bg-white needs-validation">
+                <!-- 👈 El formulario se mantiene configurado correctamente hacia Formspree -->
+                <form action="https://formspree.io" method="POST" id="contact-form" class="p-4 p-md-5 border rounded-3 bg-white needs-validation" novalidate>
                     
-                    <!-- 👈 AGREGADO: Esto le dice a Formspree que envíe al usuario a tu ruta de éxito al terminar -->
+                    <!-- Campo oculto para la redirección de éxito -->
                     <input type="hidden" name="_next" value="https://pythonanywhere.com">
 
                     <div class="mb-3">
@@ -56,21 +56,20 @@
     </div>
 </section>
 
+<!-- 👈 SCRIPT OPTIMIZADO PARA FORMSPREE -->
 <script>
 (() => {
   'use strict'
-  // Busca todos los formularios que requieren validación de Bootstrap
-  const forms = document.querySelectorAll('.needs-validation')
+  const form = document.getElementById('contact-form')
 
-  // Bucle sobre ellos para evitar el envío si hay campos vacíos o incorrectos
-  Array.from(forms).forEach(form => {
-    form.addEventListener('submit', event => {
-      if (!form.checkValidity()) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-      form.classList.add('was-validated')
-    }, false)
-  })
+  form.addEventListener('submit', event => {
+    // Si el formulario NO es válido, detenemos el envío por completo
+    if (!form.checkValidity()) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    // Añadimos los colores de Bootstrap (rojo si está mal, verde si está bien)
+    form.classList.add('was-validated')
+  }, false)
 })()
 </script>
